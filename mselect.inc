@@ -191,7 +191,7 @@ static
 	ListPage[MAX_PLAYERS],
 	bool:ListLoop[MAX_PLAYERS],
 	FunctionName[MAX_PLAYERS][MSELECT_MAX_FUNCTION_NAME],
-	bool:TD_FirstCancelSkipped[MAX_PLAYERS],
+	bool:TD_SkipCancel[MAX_PLAYERS],
 	TD_ItemsModel[MAX_PLAYERS][MSELECT_MAX_ITEMS],
 	TD_ItemsBgColors[MAX_PLAYERS][MSELECT_MAX_ITEMS],
 	TD_PageFgColor[MAX_PLAYERS],
@@ -249,6 +249,7 @@ stock MSelect_Close(playerid)
 		TD_Remove(playerid, TD_Item[playerid][i]);
 	}
 
+	TD_SkipCancel[playerid] = true;
 	CancelSelectTextDraw(playerid);
 }
 
@@ -337,7 +338,6 @@ stock MSelect_Open(playerid, function[], items_array[], items_count, bool:list_l
 	           TD_ItemsBgColors[playerid], TD_PageFgColor[playerid]);
 
 	SelectTextDraw(playerid, select_color);
-	TD_FirstCancelSkipped[playerid] = true;
 }
 
 stock MSelect_IsOpen(playerid)
@@ -673,16 +673,17 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 
 public OnPlayerClickTextDraw(playerid, Text:clickedid)
 {
-	if (clickedid == Text:INVALID_TEXT_DRAW && MSelect_IsOpen(playerid)) {
-		if (TD_FirstCancelSkipped[playerid]) {
-			TD_FirstCancelSkipped[playerid] = false;
-		} else {
-			new call_func[MSELECT_MAX_FUNCTION_NAME] = "msr_";
-			strcat(call_func, FunctionName[playerid]);
+	if (clickedid == Text:INVALID_TEXT_DRAW && TD_SkipCancel[playerid]) {
+		TD_SkipCancel[playerid] = false;
+		return 1;
+	}
 
-			if (funcidx(call_func) != -1) {
-				CallLocalFunction(call_func, "iiii", playerid, _:MSelect_Cancel, -1, MSELECT_INVALID_MODEL_ID);
-			}
+	if (clickedid == Text:INVALID_TEXT_DRAW && MSelect_IsOpen(playerid)) {
+		new call_func[MSELECT_MAX_FUNCTION_NAME] = "msr_";
+		strcat(call_func, FunctionName[playerid]);
+
+		if (funcidx(call_func) != -1) {
+			CallLocalFunction(call_func, "iiii", playerid, _:MSelect_Cancel, -1, MSELECT_INVALID_MODEL_ID);
 		}
 		return 1;
 	}
