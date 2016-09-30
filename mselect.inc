@@ -684,7 +684,7 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 				CallLocalFunction(call_func, "iiii", playerid, _:MSelect_Cancel, -1, MSELECT_INVALID_MODEL_ID);
 			}
 		}
-		return 0;
+		return 1;
 	}
 
 	#if defined MS_OnPlayerClickTextDraw
