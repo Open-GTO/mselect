@@ -414,7 +414,7 @@ static stock TD_SetPage(playerid, &page_id, items_array[], items_count, bool:lis
 	}
 }
 
-static stock GetPaginatorInfo(items_count, &curr_page = 0, &max_page = 0, &start_index = 0, &end_index = 0, list_loop = false)
+static stock GetPaginatorInfo(items_count, &curr_page = 0, &max_page = 0, &start_index = 0, &end_index = 0, bool:list_loop = false)
 {
 	if (items_count <= 0) {
 		return;
@@ -606,7 +606,7 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 		}
 
 		// check paginator
-		if (TD_ButtonPrev[playerid] == playertextid && ListPage[playerid] != 0) {
+		if (TD_ButtonPrev[playerid] == playertextid && (ListLoop[playerid] || ListPage[playerid] != 0)) {
 			ListPage[playerid]--;
 			TD_SetPage(playerid, ListPage[playerid], TD_ItemsModel[playerid], ItemsCount[playerid],
 			           ListLoop[playerid], TD_PosX[playerid], TD_PosY[playerid],
@@ -621,7 +621,7 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 		new max_page;
 		GetPaginatorInfo(ItemsCount[playerid], .max_page = max_page);
 
-		if (TD_ButtonNext[playerid] == playertextid && ListPage[playerid] != max_page - 1) {
+		if (TD_ButtonNext[playerid] == playertextid && (ListLoop[playerid] || ListPage[playerid] != max_page - 1)) {
 			ListPage[playerid]++;
 			TD_SetPage(playerid, ListPage[playerid], TD_ItemsModel[playerid], ItemsCount[playerid],
 			           ListLoop[playerid], TD_PosX[playerid], TD_PosY[playerid],
