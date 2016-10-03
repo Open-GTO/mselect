@@ -100,12 +100,12 @@ MSELECT_MAX_FUNCTION_NAME | 31 | no
 MSELECT_INVALID_MODEL_ID |  -1 | no
 
 # Usage
-The system provides the ability to create a function to open MSelect, this is useful when multiple calls one list (mostly used when creating nested menus):
+The system provides the ability to create a function to open Model Selection window, this is useful when multiple calls window:
 ```Pawn
-MSelectCreate:test(playerid)
+MSelectCreate:example_ms(playerid)
 {
 	static
-		items_array[311] = {-1, ...},
+		items_array[311] = {MSELECT_INVALID_MODEL_ID, ...},
 		items_count;
 
 	if (items_array[0] == -1) {
@@ -119,10 +119,10 @@ MSelectCreate:test(playerid)
 		}
 	}
 
-	MSelect_Open(playerid, MSelect:test, items_array, items_count, .header = "Header");
+	MSelect_Open(playerid, MSelect:example_ms, items_array, items_count, .header = "Header");
 }
 
-MSelectResponse:test(playerid, MSelectType:response, itemid, modelid)
+MSelectResponse:example_ms(playerid, MSelectType:response, itemid, modelid)
 {
 	new string[144];
 	format(string, sizeof(string), "ID: %d | Type: %d | Item: %d | Model: %d",
