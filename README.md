@@ -106,9 +106,9 @@ MSelectCreate:example_ms(playerid)
 {
 	static
 		items_array[311] = {MSELECT_INVALID_MODEL_ID, ...},
-		items_count;
+		items_count = 0;
 
-	if (items_array[0] == -1) {
+	if (items_count == 0) {
 		for(new i = 0; i <= sizeof(items_array); i++) {
 			if (i == 74) {
 				continue;
