@@ -1,5 +1,5 @@
 # mselect
- Model Select with previews.
+Model Select with previews. Text Draw's style based on Text Draw's from vspawner script by Kye.
 
 # Screens
 Skin selection:
@@ -13,7 +13,7 @@ MSelect_Show(playerid, function[])
 
 #### Open MSelect
 ```Pawn
-stock MSelect_Open(playerid, function[], items_array[], items_count, bool:list_loop = MSELECT_DEF_LIST_LOOP,
+MSelect_Open(playerid, function[], items_array[], items_count, bool:list_loop = MSELECT_DEF_LIST_LOOP,
       header[] = "", button[] = MSELECT_DEF_BUTTON_TEXT,
       button_next[] = MSELECT_DEF_BUTTON_NEXT, button_prev[] = MSELECT_DEF_BUTTON_PREV,
       Float:pos_x = MSELECT_DEF_POS_X, Float:pos_y = MSELECT_DEF_POS_Y,
