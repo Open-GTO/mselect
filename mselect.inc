@@ -719,9 +719,7 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 
 	if (clickedid == Text:INVALID_TEXT_DRAW && MSelect_IsOpen(playerid)) {
 		// close the menu
-		if (response_type == MSelect_Button) {
-			MSelect_Close(playerid);
-		}
+		MSelect_Close(playerid);
 
 		// call the function
 		new call_func[MSELECT_MAX_FUNCTION_NAME] = "msr_";
