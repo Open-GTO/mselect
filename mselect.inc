@@ -188,6 +188,9 @@ enum MSelectType {
 static
 	bool:IsOpen[MAX_PLAYERS],
 	ItemsCount[MAX_PLAYERS],
+	ListItemID[MAX_PLAYERS],
+	ListItemModel[MAX_PLAYERS],
+	ListItemPage[MAX_PLAYERS],
 	ListPage[MAX_PLAYERS],
 	bool:ListLoop[MAX_PLAYERS],
 	FunctionName[MAX_PLAYERS][MSELECT_MAX_FUNCTION_NAME],
@@ -195,6 +198,7 @@ static
 	TD_ItemsModel[MAX_PLAYERS][MSELECT_MAX_ITEMS],
 	TD_ItemsBgColors[MAX_PLAYERS][MSELECT_MAX_ITEMS],
 	TD_PageFgColor[MAX_PLAYERS],
+	TD_SelectColor[MAX_PLAYERS],
 	Float:TD_PosX[MAX_PLAYERS],
 	Float:TD_PosY[MAX_PLAYERS],
 	Float:TD_ItemWidth[MAX_PLAYERS],
@@ -281,6 +285,9 @@ stock MSelect_Open(playerid, function[], items_array[], items_count, bool:list_l
 
 	IsOpen[playerid] = true;
 	ItemsCount[playerid] = items_count;
+	ListItemID[playerid] = -1;
+	ListItemModel[playerid] = MSELECT_INVALID_MODEL_ID;
+	ListItemPage[playerid] = 0;
 	ListPage[playerid] = 0;
 	ListLoop[playerid] = list_loop;
 	TD_PosX[playerid] = pos_x;
@@ -297,6 +304,7 @@ stock MSelect_Open(playerid, function[], items_array[], items_count, bool:list_l
 	TD_PaddingPage[playerid] = page_padding;
 	TD_ItemsBgColors[playerid] = items_bg_colors;
 	TD_PageFgColor[playerid] = page_fg_color;
+	TD_SelectColor[playerid] = select_color;
 	MS_strcpy(FunctionName[playerid], function, MSELECT_MAX_FUNCTION_NAME);
 
 	for (new i = 0; i < items_count; i++) {
@@ -412,6 +420,10 @@ static stock TD_SetPage(playerid, &page_id, items_array[], items_count, bool:lis
 			                   pos_y);
 		}
 	}
+
+	if (page_id == ListItemPage[playerid]) {
+		TD_SelectItem(playerid, ListItemID[playerid]);
+	}
 }
 
 static stock GetPaginatorInfo(items_count, &curr_page = 0, &max_page = 0, &start_index = 0, &end_index = 0, bool:list_loop = false)
@@ -445,6 +457,27 @@ static stock GetPaginatorInfo(items_count, &curr_page = 0, &max_page = 0, &start
 	if (items_count % end_index == items_count) {
 		end_index = start_index + items_count % MSELECT_MAX_ITEMS_ON_LIST;
 	}
+}
+
+static stock TD_SelectItem(playerid, item_id)
+{
+	if (!(0 <= item_id < ItemsCount[playerid])) {
+		return 0;
+	}
+
+	new prev_item_id = ListItemID[playerid];
+
+	if (prev_item_id != -1) {
+		PlayerTextDrawBackgroundColor(playerid, TD_Item[playerid][prev_item_id], TD_ItemsBgColors[playerid][prev_item_id]);
+		PlayerTextDrawShow(playerid, TD_Item[playerid][prev_item_id]);
+	}
+	PlayerTextDrawBackgroundColor(playerid, TD_Item[playerid][item_id], TD_SelectColor[playerid]);
+	PlayerTextDrawShow(playerid, TD_Item[playerid][item_id]);
+
+	ListItemID[playerid] = item_id;
+	ListItemModel[playerid] = TD_ItemsModel[playerid][item_id];
+	ListItemPage[playerid] = ListPage[playerid];
+	return 1;
 }
 
 static stock TD_ItemCreate(playerid, item_id, model_id, bg_color, Float:pos_x, Float:pos_y,
@@ -582,22 +615,15 @@ public OnPlayerDisconnect(playerid, reason)
 public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 {
 	if (MSelect_IsOpen(playerid)) {
-		new
-			TextListType:response_type = TextListType:MSelect_None,
-			list_id = -1,
-			model_id = MSELECT_INVALID_MODEL_ID;
+		new TextListType:response_type = TextListType:MSelect_None;
 
 		// check listitem
 		for (new i = 0; i < ItemsCount[playerid]; i++) {
 			if (TD_Item[playerid][i] == playertextid) {
-				list_id = i;
+				TD_SelectItem(playerid, i);
 				response_type = TextListType:MSelect_Item;
 				break;
 			}
-		}
-
-		if (list_id != -1) {
-			model_id = TD_ItemsModel[playerid][list_id];
 		}
 
 		// check buttons
@@ -638,12 +664,18 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 			return 0;
 		}
 
+		// check list_id
+		new list_id = ListItemID[playerid];
+		if (ListItemPage[playerid] != ListPage[playerid]) {
+			list_id = -1;
+		}
+
 		// call function
 		new call_func[MSELECT_MAX_FUNCTION_NAME] = "msr_";
 		strcat(call_func, FunctionName[playerid]);
 
 		if (funcidx(call_func) != -1) {
-			CallLocalFunction(call_func, "iiii", playerid, _:response_type, list_id, model_id);
+			CallLocalFunction(call_func, "iiii", playerid, _:response_type, list_id, ListItemModel[playerid]);
 			return 1;
 		}
 	}
@@ -683,7 +715,7 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 		strcat(call_func, FunctionName[playerid]);
 
 		if (funcidx(call_func) != -1) {
-			CallLocalFunction(call_func, "iiii", playerid, _:MSelect_Cancel, -1, MSELECT_INVALID_MODEL_ID);
+			CallLocalFunction(call_func, "iiii", playerid, _:MSelect_Cancel, ListItemID[playerid], ListItemModel[playerid]);
 		}
 		return 1;
 	}
