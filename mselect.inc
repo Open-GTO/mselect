@@ -236,7 +236,6 @@ stock MSelect_Show(playerid, function[])
 stock MSelect_Close(playerid)
 {
 	IsOpen[playerid] = false;
-	FunctionName[playerid][0] = '\0';
 
 	TD_Remove(playerid, TD_Header[playerid]);
 
@@ -673,6 +672,11 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 			list_id = -1;
 		}
 
+		// close the menu
+		if (response_type == MSelect_Button) {
+			MSelect_Close(playerid);
+		}
+
 		// call function
 		new call_func[MSELECT_MAX_FUNCTION_NAME] = "msr_";
 		strcat(call_func, FunctionName[playerid]);
@@ -680,11 +684,6 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 		if (funcidx(call_func) != -1) {
 			CallLocalFunction(call_func, "iiii", playerid, _:response_type, list_id, ListItemModel[playerid]);
 		}
-
-		if (response_type == MSelect_Button) {
-			MSelect_Close(playerid);
-		}
-
 		return 1;
 	}
 
@@ -719,14 +718,18 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 	}
 
 	if (clickedid == Text:INVALID_TEXT_DRAW && MSelect_IsOpen(playerid)) {
+		// close the menu
+		if (response_type == MSelect_Button) {
+			MSelect_Close(playerid);
+		}
+
+		// call the function
 		new call_func[MSELECT_MAX_FUNCTION_NAME] = "msr_";
 		strcat(call_func, FunctionName[playerid]);
 
 		if (funcidx(call_func) != -1) {
 			CallLocalFunction(call_func, "iiii", playerid, _:MSelect_Cancel, ListItemID[playerid], ListItemModel[playerid]);
 		}
-
-		MSelect_Close(playerid);
 		return 1;
 	}
 
