@@ -725,6 +725,8 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 		if (funcidx(call_func) != -1) {
 			CallLocalFunction(call_func, "iiii", playerid, _:MSelect_Cancel, ListItemID[playerid], ListItemModel[playerid]);
 		}
+
+		MSelect_Close(playerid);
 		return 1;
 	}
 
