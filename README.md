@@ -109,7 +109,7 @@ MSelectCreate:example_ms(playerid)
 		items_count = 0;
 
 	if (items_count == 0) {
-		for(new i = 0; i <= sizeof(items_array); i++) {
+		for (new i = 0; i <= sizeof(items_array); i++) {
 			if (i == 74) {
 				continue;
 			}
@@ -128,9 +128,6 @@ MSelectResponse:example_ms(playerid, MSelectType:response, itemid, modelid)
 	format(string, sizeof(string), "ID: %d | Type: %d | Item: %d | Model: %d",
 	       playerid, _:response, itemid, modelid);
 	SendClientMessage(playerid, -1, string);
-	if (response == MSelect_Cancel) {
-		MSelect_Close(playerid);
-	}
 	return 1;
 }
 ```

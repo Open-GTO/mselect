@@ -617,6 +617,38 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 	if (MSelect_IsOpen(playerid)) {
 		new MSelectType:response_type = MSelect_None;
 
+		// check buttons
+		if (TD_ButtonCancel[playerid] == playertextid) {
+			response_type = MSelect_Button;
+		} else if (TD_ButtonPrev[playerid] == playertextid) {
+			if (ListLoop[playerid] || ListPage[playerid] != 0) {
+				ListPage[playerid]--;
+				TD_SetPage(playerid, ListPage[playerid], TD_ItemsModel[playerid], ItemsCount[playerid],
+						ListLoop[playerid], TD_PosX[playerid], TD_PosY[playerid],
+						TD_RotX[playerid], TD_RotY[playerid], TD_RotZ[playerid], TD_Zoom[playerid],
+						TD_ItemWidth[playerid], TD_ItemHeight[playerid],
+						TD_PaddingBackground[playerid], TD_PaddingItem[playerid], TD_PaddingPage[playerid],
+						TD_ItemsBgColors[playerid], TD_PageFgColor[playerid]);
+
+				response_type = MSelect_ButtonPrev;
+			}
+		} else if (TD_ButtonNext[playerid] == playertextid) {
+			new max_page;
+			GetPaginatorInfo(ItemsCount[playerid], .max_page = max_page);
+
+			if (ListLoop[playerid] || ListPage[playerid] != max_page - 1) {
+				ListPage[playerid]++;
+				TD_SetPage(playerid, ListPage[playerid], TD_ItemsModel[playerid], ItemsCount[playerid],
+						ListLoop[playerid], TD_PosX[playerid], TD_PosY[playerid],
+						TD_RotX[playerid], TD_RotY[playerid], TD_RotZ[playerid], TD_Zoom[playerid],
+						TD_ItemWidth[playerid], TD_ItemHeight[playerid],
+						TD_PaddingBackground[playerid], TD_PaddingItem[playerid], TD_PaddingPage[playerid],
+						TD_ItemsBgColors[playerid], TD_PageFgColor[playerid]);
+
+				response_type = MSelect_ButtonNext;
+			}
+		}
+
 		// check listitem
 		for (new i = 0; i < ItemsCount[playerid]; i++) {
 			if (TD_Item[playerid][i] == playertextid) {
@@ -626,42 +658,13 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 			}
 		}
 
-		// check buttons
-		if (TD_ButtonCancel[playerid] == playertextid) {
-			response_type = MSelect_Button;
-		}
-
-		// check paginator
-		if (TD_ButtonPrev[playerid] == playertextid && (ListLoop[playerid] || ListPage[playerid] != 0)) {
-			ListPage[playerid]--;
-			TD_SetPage(playerid, ListPage[playerid], TD_ItemsModel[playerid], ItemsCount[playerid],
-			           ListLoop[playerid], TD_PosX[playerid], TD_PosY[playerid],
-			           TD_RotX[playerid], TD_RotY[playerid], TD_RotZ[playerid], TD_Zoom[playerid],
-			           TD_ItemWidth[playerid], TD_ItemHeight[playerid],
-			           TD_PaddingBackground[playerid], TD_PaddingItem[playerid], TD_PaddingPage[playerid],
-			           TD_ItemsBgColors[playerid], TD_PageFgColor[playerid]);
-
-			response_type = MSelect_ButtonPrev;
-		}
-
-		new max_page;
-		GetPaginatorInfo(ItemsCount[playerid], .max_page = max_page);
-
-		if (TD_ButtonNext[playerid] == playertextid && (ListLoop[playerid] || ListPage[playerid] != max_page - 1)) {
-			ListPage[playerid]++;
-			TD_SetPage(playerid, ListPage[playerid], TD_ItemsModel[playerid], ItemsCount[playerid],
-			           ListLoop[playerid], TD_PosX[playerid], TD_PosY[playerid],
-			           TD_RotX[playerid], TD_RotY[playerid], TD_RotZ[playerid], TD_Zoom[playerid],
-			           TD_ItemWidth[playerid], TD_ItemHeight[playerid],
-			           TD_PaddingBackground[playerid], TD_PaddingItem[playerid], TD_PaddingPage[playerid],
-			           TD_ItemsBgColors[playerid], TD_PageFgColor[playerid]);
-
-			response_type = MSelect_ButtonNext;
-		}
-
 		// check on errors
 		if (response_type == MSelect_None) {
-			return 0;
+			#if defined MS_OnPlayerClickPlayerTextDraw
+				return MS_OnPlayerClickPlayerTextDraw(playerid, playertextid);
+			#else
+				return 0;
+			#endif
 		}
 
 		// check list_id
@@ -676,8 +679,13 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 
 		if (funcidx(call_func) != -1) {
 			CallLocalFunction(call_func, "iiii", playerid, _:response_type, list_id, ListItemModel[playerid]);
-			return 1;
 		}
+
+		if (response_type == MSelect_Button) {
+			MSelect_Close(playerid);
+		}
+
+		return 1;
 	}
 
 	#if defined MS_OnPlayerClickPlayerTextDraw
