@@ -615,20 +615,20 @@ public OnPlayerDisconnect(playerid, reason)
 public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 {
 	if (MSelect_IsOpen(playerid)) {
-		new TextListType:response_type = TextListType:MSelect_None;
+		new MSelectType:response_type = MSelect_None;
 
 		// check listitem
 		for (new i = 0; i < ItemsCount[playerid]; i++) {
 			if (TD_Item[playerid][i] == playertextid) {
 				TD_SelectItem(playerid, i);
-				response_type = TextListType:MSelect_Item;
+				response_type = MSelect_Item;
 				break;
 			}
 		}
 
 		// check buttons
 		if (TD_ButtonCancel[playerid] == playertextid) {
-			response_type = TextListType:MSelect_Button;
+			response_type = MSelect_Button;
 		}
 
 		// check paginator
@@ -641,7 +641,7 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 			           TD_PaddingBackground[playerid], TD_PaddingItem[playerid], TD_PaddingPage[playerid],
 			           TD_ItemsBgColors[playerid], TD_PageFgColor[playerid]);
 
-			response_type = TextListType:MSelect_ButtonPrev;
+			response_type = MSelect_ButtonPrev;
 		}
 
 		new max_page;
@@ -656,11 +656,11 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 			           TD_PaddingBackground[playerid], TD_PaddingItem[playerid], TD_PaddingPage[playerid],
 			           TD_ItemsBgColors[playerid], TD_PageFgColor[playerid]);
 
-			response_type = TextListType:MSelect_ButtonNext;
+			response_type = MSelect_ButtonNext;
 		}
 
 		// check on errors
-		if (response_type == TextListType:MSelect_None) {
+		if (response_type == MSelect_None) {
 			return 0;
 		}
 
