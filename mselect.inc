@@ -225,7 +225,7 @@ static
 
 */
 
-stock MSelect_Show(playerid, function[])
+stock MSelect_Show(playerid, const function[])
 {
 	new call_func[MSELECT_MAX_FUNCTION_NAME] = "msc_";
 	strcat(call_func, function);
@@ -256,9 +256,9 @@ stock MSelect_Close(playerid)
 	CancelSelectTextDraw(playerid);
 }
 
-stock MSelect_Open(playerid, function[], items_array[], items_count, bool:list_loop = MSELECT_DEF_LIST_LOOP,
-      header[] = "", button[] = MSELECT_DEF_BUTTON_TEXT,
-      button_next[] = MSELECT_DEF_BUTTON_NEXT, button_prev[] = MSELECT_DEF_BUTTON_PREV,
+stock MSelect_Open(playerid, const function[], const items_array[], items_count, bool:list_loop = MSELECT_DEF_LIST_LOOP,
+      const header[] = "", const button[] = MSELECT_DEF_BUTTON_TEXT,
+      const button_next[] = MSELECT_DEF_BUTTON_NEXT, const button_prev[] = MSELECT_DEF_BUTTON_PREV,
       Float:pos_x = MSELECT_DEF_POS_X, Float:pos_y = MSELECT_DEF_POS_Y,
       Float:button_width = MSELECT_DEF_BUTTON_WIDTH, Float:button_height = MSELECT_DEF_BUTTON_HEIGHT,
       Float:page_button_width = MSELECT_DEF_PBUTTON_WIDTH, Float:page_button_height = MSELECT_DEF_PBUTTON_HEIGHT,
@@ -268,7 +268,7 @@ stock MSelect_Open(playerid, function[], items_array[], items_count, bool:list_l
       Float:item_padding = MSELECT_DEF_ITEM_PADDING, Float:button_padding = MSELECT_DEF_BUTTON_PADDING,
       Float:header_padding = MSELECT_DEF_HEADER_PADDING, Float:page_padding = MSELECT_DEF_PAGE_PADDING,
       select_color = MSELECT_DEF_SELECT_COLOR,
-      items_bg_colors[MSELECT_MAX_ITEMS] = {MSELECT_DEF_ITEMS_BG_COLOR, ...},
+      const items_bg_colors[MSELECT_MAX_ITEMS] = {MSELECT_DEF_ITEMS_BG_COLOR, ...},
       dialog_bg_color = MSELECT_DEF_DIALOG_BG_COLOR,
       header_fg_color = MSELECT_DEF_HEADER_FG_COLOR,
       page_fg_color = MSELECT_DEF_PAGE_FG_COLOR,
@@ -357,10 +357,10 @@ stock MSelect_IsOpen(playerid)
 	Private functions
 
 */
-static stock TD_SetPage(playerid, &page_id, items_array[], items_count, bool:list_loop,
+static stock TD_SetPage(playerid, &page_id, const items_array[], items_count, bool:list_loop,
                         Float:pos_x, Float:pos_y, Float:rot_x, Float:rot_y, Float:rot_z, Float:zoom,
                         Float:width, Float:height, Float:padding_bg, Float:padding_item, Float:padding_page,
-                        items_bg_colors[MSELECT_MAX_ITEMS], page_fg_color)
+                        const items_bg_colors[MSELECT_MAX_ITEMS], page_fg_color)
 {
 	// list
 	new pages_count, start_index, end_index;
@@ -501,7 +501,7 @@ static stock TD_ListUpdateModel(playerid, item_id, model_id)
     PlayerTextDrawSetPreviewModel(playerid, TD_Item[playerid][item_id], model_id);
 }
 
-static stock TD_PaginatorCreate(playerid, pagestr[], fg_color, Float:pos_x, Float:pos_y)
+static stock TD_PaginatorCreate(playerid, const pagestr[], fg_color, Float:pos_x, Float:pos_y)
 {
 	TD_Page[playerid] = CreatePlayerTextDraw(playerid, pos_x, pos_y, pagestr);
 	PlayerTextDrawUseBox(playerid, TD_Page[playerid], 0);
@@ -516,12 +516,12 @@ static stock TD_PaginatorCreate(playerid, pagestr[], fg_color, Float:pos_x, Floa
 	PlayerTextDrawShow(playerid, TD_Page[playerid]);
 }
 
-static stock TD_PaginatorUpdateText(playerid, pagestr[])
+static stock TD_PaginatorUpdateText(playerid, const pagestr[])
 {
 	PlayerTextDrawSetString(playerid, TD_Page[playerid], pagestr);
 }
 
-static stock TD_HeaderCreate(playerid, text[], fg_color, Float:pos_x, Float:pos_y)
+static stock TD_HeaderCreate(playerid, const text[], fg_color, Float:pos_x, Float:pos_y)
 {
 	TD_Header[playerid] = CreatePlayerTextDraw(playerid, pos_x, pos_y, text);
 	PlayerTextDrawUseBox(playerid, TD_Header[playerid], 0);
@@ -550,7 +550,7 @@ static stock TD_BackgroundCreate(playerid, bg_color, Float:pos_x, Float:pos_y, F
 	PlayerTextDrawShow(playerid, TD_Background[playerid]);
 }
 
-static stock TD_ButtonCreate(playerid, &PlayerText:button, text[], bg_color, fg_color,
+static stock TD_ButtonCreate(playerid, &PlayerText:button, const text[], bg_color, fg_color,
                              Float:pos_x, Float:pos_y, Float:width, Float:height)
 {
 	button = CreatePlayerTextDraw(playerid, pos_x, pos_y, text);
@@ -754,7 +754,7 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 
 */
 
-static stock MS_strcpy(result[], source[], const size = sizeof(result))
+static stock MS_strcpy(result[], const source[], const size = sizeof(result))
 {
 	result[0] = 0;
 	return strcat(result, source, size);

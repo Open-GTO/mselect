@@ -1,4 +1,6 @@
 {
+	"user": "Open-GTO",
+	"repo": "mselect",
 	"entry": "test.pwn",
 	"output": "test.amx",
 	"dependencies": [

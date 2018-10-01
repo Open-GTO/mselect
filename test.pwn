@@ -2,6 +2,35 @@
 
 #include "mselect.inc"
 
+MSelectCreate:example_ms(playerid)
+{
+	static
+		items_array[311] = {MSELECT_INVALID_MODEL_ID, ...},
+		items_count = 0;
+
+	if (items_count == 0) {
+		for (new i = 0; i <= sizeof(items_array); i++) {
+			if (i == 74) {
+				continue;
+			}
+
+			items_array[items_count] = i;
+			items_count++;
+		}
+	}
+
+	MSelect_Open(playerid, MSelect:example_ms, items_array, items_count, .header = "Header");
+}
+
+MSelectResponse:example_ms(playerid, MSelectType:response, itemid, modelid)
+{
+	new string[144];
+	format(string, sizeof(string), "ID: %d | Type: %d | Item: %d | Model: %d",
+	       playerid, _:response, itemid, modelid);
+	SendClientMessage(playerid, -1, string);
+	return 1;
+}
+
 main() {
-	// write tests for libraries here and run "sampctl package run"
+	MSelect_Show(0, MSelect:example_ms);
 }
