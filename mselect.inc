@@ -357,6 +357,7 @@ stock MSelect_IsOpen(playerid)
 	Private functions
 
 */
+
 static stock TD_SetPage(playerid, &page_id, const items_array[], items_count, bool:list_loop,
                         Float:pos_x, Float:pos_y, Float:rot_x, Float:rot_y, Float:rot_z, Float:zoom,
                         Float:width, Float:height, Float:padding_bg, Float:padding_item, Float:padding_page,
@@ -649,12 +650,9 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 		}
 
 		// check listitem
-		for (new i = 0; i < ItemsCount[playerid]; i++) {
-			if (TD_Item[playerid][i] == playertextid) {
-				TD_SelectItem(playerid, i);
-				response_type = MSelect_Item;
-				break;
-			}
+		if(TD_Item[playerid][0] <= playertextid <= TD_Item[playerid][ItemsCount[playerid] - 1]) {
+			TD_SelectItem(playerid, _:playertextid - _:TD_Item[playerid][0]);
+			response_type = MSelect_Item;
 		}
 
 		// check on errors
