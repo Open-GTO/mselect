@@ -148,6 +148,39 @@
 #define MSELECT_MAX_FUNCTION_NAME 31
 #define MSELECT_INVALID_MODEL_ID  -1
 
+// bullshit for compatibility with unmodified include files
+#if !defined FIX_const
+	#define FIX_const 0
+	#define MSELECT_FIX_CLEAR
+#endif
+
+#if !FIX_const
+	native MS_CreatePlayerTextDraw(playerid, Float:x, Float:y, const text[]) = CreatePlayerTextDraw;
+
+	#if defined _ALS_CreatePlayerTextDraw
+		#undef CreatePlayerTextDraw
+	#else
+		#define _ALS_CreatePlayerTextDraw
+	#endif
+
+	#define CreatePlayerTextDraw MS_CreatePlayerTextDraw
+
+	native MS_PlayerTextDrawSetString(playerid, PlayerText:text, const string[]) = PlayerTextDrawSetString;
+
+	#if defined _ALS_PlayerTextDrawSetString
+		#undef PlayerTextDrawSetString
+	#else
+		#define _ALS_PlayerTextDrawSetString
+	#endif
+
+	#define PlayerTextDrawSetString MS_PlayerTextDrawSetString
+
+	#if defined MSELECT_FIX_CLEAR
+		#undef MSELECT_FIX_CLEAR
+		#undef FIX_const
+	#endif
+#endif
+
 /*
 
 	Define functions
@@ -227,14 +260,28 @@ static
 
 stock MSelect_Show(playerid, const function[])
 {
+	if (!IsPlayerConnected(playerid)) {
+		return 0;
+	}
+
 	new call_func[MSELECT_MAX_FUNCTION_NAME] = "msc_";
 	strcat(call_func, function);
 
 	CallLocalFunction(call_func, "i", playerid);
+
+	return 1;
 }
 
 stock MSelect_Close(playerid)
 {
+	if (!IsPlayerConnected(playerid)) {
+		return 0;
+	}
+
+	if (!MSelect_IsOpen(playerid)) {
+		return 0;
+	}
+
 	IsOpen[playerid] = false;
 
 	TD_Remove(playerid, TD_Header[playerid]);
@@ -254,6 +301,8 @@ stock MSelect_Close(playerid)
 
 	TD_SkipCancel[playerid] = true;
 	CancelSelectTextDraw(playerid);
+
+	return 1;
 }
 
 stock MSelect_Open(playerid, const function[], const items_array[], items_count, bool:list_loop = MSELECT_DEF_LIST_LOOP,
@@ -275,6 +324,10 @@ stock MSelect_Open(playerid, const function[], const items_array[], items_count,
       button_fg_color = MSELECT_DEF_BUTTON_FG_COLOR,
       button_bg_color = MSELECT_DEF_BUTTON_BG_COLOR)
 {
+	if (!IsPlayerConnected(playerid)) {
+		return 0;
+	}
+
 	MSelect_Close(playerid);
 
 	if (items_count > MSELECT_MAX_ITEMS) {
@@ -345,10 +398,16 @@ stock MSelect_Open(playerid, const function[], const items_array[], items_count,
 	           TD_ItemsBgColors[playerid], TD_PageFgColor[playerid]);
 
 	SelectTextDraw(playerid, select_color);
+
+	return 1;
 }
 
 stock MSelect_IsOpen(playerid)
 {
+	if (!IsPlayerConnected(playerid)) {
+		return 0;
+	}
+
 	return _:IsOpen[playerid];
 }
 
@@ -578,15 +637,44 @@ static stock TD_Remove(playerid, &PlayerText:td)
 
 /*
 
+	OnGameModeInit
+
+*/
+
+public OnGameModeInit()
+{
+	for (new i = 0; i < sizeof(TD_Item); i++) {
+		for (new j = 0; j < sizeof(TD_Item[]); j++) {
+			TD_Item[i][j] = PlayerText:INVALID_TEXT_DRAW;
+		}
+	}
+
+	#if defined MS_OnGameModeInit
+		return MS_OnGameModeInit();
+	#else
+		return 1;
+	#endif
+}
+#if defined _ALS_OnGameModeInit
+	#undef OnGameModeInit
+#else
+	#define _ALS_OnGameModeInit
+#endif
+
+#define OnGameModeInit MS_OnGameModeInit
+#if defined MS_OnGameModeInit
+	forward MS_OnGameModeInit();
+#endif
+
+/*
+
 	OnPlayerDisconnect
 
 */
 
 public OnPlayerDisconnect(playerid, reason)
 {
-	if (MSelect_IsOpen(playerid)) {
-		MSelect_Close(playerid);
-	}
+	MSelect_Close(playerid);
 
 	#if defined MS_OnPlayerDisconnect
 		return MS_OnPlayerDisconnect(playerid, reason);
