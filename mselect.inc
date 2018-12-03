@@ -551,8 +551,6 @@ static stock TD_ItemCreate(playerid, item_id, model_id, bg_color, Float:pos_x, F
 	PlayerTextDrawSetPreviewRot(playerid,TD_Item[playerid][item_id], rot_x, rot_y, rot_z, zoom);
 	PlayerTextDrawSetSelectable(playerid, TD_Item[playerid][item_id], 1);
 	PlayerTextDrawShow(playerid, TD_Item[playerid][item_id]);
-
-	PlayerTextDrawShow(playerid, TD_Item[playerid][item_id]);
 }
 
 static stock TD_ListUpdateModel(playerid, item_id, model_id)
