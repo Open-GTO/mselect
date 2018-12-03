@@ -588,8 +588,6 @@ static stock TD_HeaderCreate(playerid, const text[], fg_color, Float:pos_x, Floa
 	PlayerTextDrawSetOutline(playerid, TD_Header[playerid], 1);
 	PlayerTextDrawColor(playerid, TD_Header[playerid], fg_color);
 	PlayerTextDrawShow(playerid, TD_Header[playerid]);
-
-	PlayerTextDrawShow(playerid, TD_Header[playerid]);
 }
 
 static stock TD_BackgroundCreate(playerid, bg_color, Float:pos_x, Float:pos_y, Float:item_width, Float:item_height, Float:padding_bg, Float:padding_item)
