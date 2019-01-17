@@ -155,7 +155,7 @@
 #endif
 
 #if !FIX_const
-	native MS_CreatePlayerTextDraw(playerid, Float:x, Float:y, const text[]) = CreatePlayerTextDraw;
+	native PlayerText:MS_CreatePlayerTextDraw(playerid, Float:x, Float:y, const text[]) = CreatePlayerTextDraw;
 
 	#if defined _ALS_CreatePlayerTextDraw
 		#undef CreatePlayerTextDraw
